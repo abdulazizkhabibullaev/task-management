@@ -79,4 +79,38 @@ export class TaskService extends CommonService<Task> {
     async deleteByProjectId(project_id: Types.ObjectId, user_id: Types.ObjectId, options) {
         return await this.deleteMany({ project_id }, user_id, options);
     }
+
+    async getCountByStatus(user_id: Types.ObjectId) {
+        const query: typeof this.Filter = {
+            user_id,
+        };
+
+        const $match: PipelineStage.Match = {
+            $match: query,
+        };
+
+        const $group: PipelineStage.Group = {
+            $group: {
+                _id: '$status',
+                count: { $sum: 1 },
+            },
+        };
+
+        const $groupTotal: PipelineStage.Group = {
+            $group: {
+                _id: null,
+                total: { $sum: '$count' },
+                statuses: {
+                    $push: {
+                        status: '$_id',
+                        count: '$count',
+                    },
+                },
+            },
+        };
+
+        const pipeline: PipelineStage[] = [$match, $group, $groupTotal];
+
+        return (await this.aggregate(pipeline)).shift() || { total: 0, statuses: [] };
+    }
 }

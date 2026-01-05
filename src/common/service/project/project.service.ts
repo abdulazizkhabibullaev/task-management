@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PipelineStage, Types } from 'mongoose';
+import { CollectionNames } from 'src/common/constant/collections';
 import { ProjectError } from 'src/common/db/models/project/project.error';
 import { Project, ProjectModel } from 'src/common/db/models/project/project.model';
 import { ErrorCodes } from 'src/common/filter/common.error';
@@ -20,16 +21,45 @@ export class ProjectService extends CommonService<Project> {
 
         if (search) query.name = search;
 
+        const $lookupTasks: PipelineStage.Lookup = {
+            $lookup: {
+                from: CollectionNames.TASK,
+                localField: '_id',
+                foreignField: 'project_id',
+                pipeline: [
+                    {
+                        $match: {
+                            is_deleted: false,
+                        },
+                    },
+                    {
+                        $group: {
+                            _id: null,
+                            count: { $sum: 1 },
+                        },
+                    },
+                ],
+                as: 'tasks',
+            },
+        };
+
+        const $unwindTasks: PipelineStage.Unwind = {
+            $unwind: {
+                path: '$tasks',
+                preserveNullAndEmptyArrays: true,
+            },
+        };
+
         const $project: PipelineStage.Project = {
             $project: {
                 name: 1,
                 created_at: 1,
                 updated_at: 1,
+                task_count: { $ifNull: ['$tasks.count', 0] },
             },
         };
 
-        const pipeline: PipelineStage[] = [$project];
-
+        const pipeline: PipelineStage[] = [$lookupTasks, $unwindTasks, $project];
         return await this.findPaging(query, dto, pipeline);
     }
 

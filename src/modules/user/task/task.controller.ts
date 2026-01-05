@@ -55,4 +55,9 @@ export class TaskController {
 
         return await this.taskService.deleteOne(dto._id, req.user._id);
     }
+
+    @Get('statistics')
+    async getStatistics(@Req() req: CustomRequest) {
+        return await this.taskService.getCountByStatus(req.user._id);
+    }
 }

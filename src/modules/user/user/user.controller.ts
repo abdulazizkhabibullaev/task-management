@@ -20,7 +20,18 @@ export class UserController {
 
     @Post('register')
     async register(@Body() dto: UserDto) {
-        return await this.userService.save(dto);
+        const user = await this.userService.save(dto);
+
+        return {
+            ...user.toObject(),
+            token: await this.jwtService.signAsync(
+                { phone_number: user.phone_number },
+                {
+                    secret: this.configService.get('JWT_SECRET'),
+                    expiresIn: this.configService.get('JWT_EXPIRES'),
+                },
+            ),
+        };
     }
 
     @Post('login')
