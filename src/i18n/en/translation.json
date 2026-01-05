@@ -1,0 +1,23 @@
+{
+  "COMMON": {
+    "SUCCESS": "Muvaffaqiyatli"
+  },
+  "ERROR": {
+    "UNKNOWN": "Noma'lum xatolik",
+    "10001": "Noma'lum xato",
+    "10002": "Ruxsatsiz foydalanuvchi",
+    "10003": "Sizda bu operatsiyani bajarish uchun ruxsat yo'q",
+    "10004": "Iltimos, to'ldirilgan ma'lumotlarga e'tibor bering",
+    "10005": "Hech narsa topilmadi",
+    "10006": "Allaqachon mavjud",
+    "10100": "Ushbu ma'lumotlarga ega foydalanuvchi topilmadi",
+    "10101": "Ushbu ma'lumotlarga ega foydalanuvchi allaqachon mavjud",
+    "10102": "Parol noto'g'ri",
+    "STATUS": {
+      "404": "So'rov url topilmadi",
+      "401": "Ruxsatsiz foydalanuvchi",
+      "400": "Xatolik",
+      "429": "So'rovlar soni ko'payib ketdi. Iltimos birozdan so'ng qayta urinib ko'ring"
+    }
+  }
+}
