@@ -13,6 +13,10 @@
     "10100": "Ushbu ma'lumotlarga ega foydalanuvchi topilmadi",
     "10101": "Ushbu ma'lumotlarga ega foydalanuvchi allaqachon mavjud",
     "10102": "Parol noto'g'ri",
+    "10200": "Ushbu ma'lumotlarga ega loyiha topilmadi",
+    "10201": "Ushbu ma'lumotlarga ega loyiha allaqachon mavjud",
+    "10300": "Ushbu ma'lumotlarga ega vazifa topilmadi",
+    "10301": "Ushbu ma'lumotlarga ega vazifa allaqachon mavjud",
     "STATUS": {
       "404": "So'rov url topilmadi",
       "401": "Ruxsatsiz foydalanuvchi",

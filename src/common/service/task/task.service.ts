@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PipelineStage, Types } from 'mongoose';
+import { CollectionNames } from 'src/common/constant/collections';
 import { TaskError } from 'src/common/db/models/task/task.error';
 import { Task, TaskModel, TaskStatus } from 'src/common/db/models/task/task.model';
 import { ErrorCodes } from 'src/common/filter/common.error';
@@ -11,6 +12,29 @@ export class TaskService extends CommonService<Task> {
     constructor() {
         super(TaskModel, ErrorCodes.TASK, ErrorCodes.TASK + 1);
     }
+
+    private $lookupProject: PipelineStage.Lookup = {
+        $lookup: {
+            from: CollectionNames.PROJECT,
+            localField: 'project_id',
+            foreignField: '_id',
+            pipeline: [
+                {
+                    $project: {
+                        name: 1,
+                    },
+                },
+            ],
+            as: 'project',
+        },
+    };
+
+    private $unwindProject: PipelineStage.Unwind = {
+        $unwind: {
+            path: '$project',
+            preserveNullAndEmptyArrays: true,
+        },
+    };
 
     async getByPaging(dto: TaskGetDto, user_id: Types.ObjectId) {
         const { search, project_id, priority, date_from, date_to } = dto;
@@ -29,6 +53,9 @@ export class TaskService extends CommonService<Task> {
 
         const $project: PipelineStage.Project = {
             $project: {
+                user_id: 1,
+                project_id: 1,
+                project: 1,
                 title: 1,
                 description: 1,
                 status: 1,
@@ -39,7 +66,7 @@ export class TaskService extends CommonService<Task> {
             },
         };
 
-        const pipeline: PipelineStage[] = [$project];
+        const pipeline: PipelineStage[] = [this.$lookupProject, this.$unwindProject, $project];
 
         return await this.findPaging(query, dto, pipeline);
     }
@@ -53,6 +80,9 @@ export class TaskService extends CommonService<Task> {
 
         const $project: PipelineStage.Project = {
             $project: {
+                user_id: 1,
+                project_id: 1,
+                project: 1,
                 title: 1,
                 description: 1,
                 status: 1,
@@ -63,7 +93,7 @@ export class TaskService extends CommonService<Task> {
             },
         };
 
-        const pipeline: PipelineStage[] = [$match, $project];
+        const pipeline: PipelineStage[] = [$match, this.$lookupProject, this.$unwindProject, $project];
 
         const item = (await this.aggregate(pipeline)).shift();
 

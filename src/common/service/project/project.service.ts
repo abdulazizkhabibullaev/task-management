@@ -53,6 +53,7 @@ export class ProjectService extends CommonService<Project> {
         const $project: PipelineStage.Project = {
             $project: {
                 name: 1,
+                user_id: 1,
                 created_at: 1,
                 updated_at: 1,
                 task_count: { $ifNull: ['$tasks.count', 0] },
@@ -73,6 +74,7 @@ export class ProjectService extends CommonService<Project> {
         const $project: PipelineStage.Project = {
             $project: {
                 name: 1,
+                user_id: 1,
                 created_at: 1,
                 updated_at: 1,
             },
