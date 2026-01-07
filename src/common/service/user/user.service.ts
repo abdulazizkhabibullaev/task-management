@@ -12,12 +12,6 @@ export class UserService extends CommonService<User> {
         super(UserModel, ErrorCodes.USER, ErrorCodes.USER + 1);
     }
 
-    private $commonProject: PipelineStage.Project = {
-        $project: {
-            password: 0,
-        },
-    };
-
     async save(dto: User) {
         dto.password = md5(dto.password);
         return await super.create(dto);
@@ -32,7 +26,7 @@ export class UserService extends CommonService<User> {
             $match: query,
         };
 
-        const pipeline: PipelineStage[] = [$match, this.$commonProject];
+        const pipeline: PipelineStage[] = [$match];
 
         const item = (await this.aggregate(pipeline)).shift();
         if (!item) throw UserError.NotFound({ phone_number });
